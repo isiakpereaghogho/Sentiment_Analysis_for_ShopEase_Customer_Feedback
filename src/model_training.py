@@ -46,7 +46,7 @@ class Training:
 def train_and_evaluate():
     try:
         # Prepare the dataset
-        train_dataset, test_dataset =prepare_sentiment_data()
+        train_dataset, test_dataset = prepare_sentiment_data()
 
         # Initialize the training class
         train = Training()

@@ -17,8 +17,8 @@ from src.data_ingestion import data_ingestion
 class data_processor:
     def __init__(self):
         self.sentiment_data = data_ingestion()
-        self.cleaner = DataCleaning(self.sentiment_data)
-        self.data = self.cleaner.clean_data()
+        self.cleaner = DataCleaning()
+        self.data = self.cleaner.clean_data(self.sentiment_data)
 
     def split_data(self):
         try:
@@ -86,4 +86,4 @@ def prepare_sentiment_data():
     except Exception as e: 
         logging.error(f"error occurred while preparing sentiment data: {e}")
 
-prepare_sentiment_data()
+

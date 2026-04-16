@@ -1,11 +1,22 @@
 import dagshub
 import mlflow
-import mlflow.tracking import MlflowClient
+from mlflow.tracking import MlflowClient
 import logging
-
-dagshub.init(repo_owner='isiakpereaghogho', repo_name='Sentiment_Analysis_for_ShopEase_Customer_Feedback', mlflow=True)
+from config.constant import model_name
 
 logging.basicConfig(level=logging.INFO)
+
+def init_dagshub():
+    try:
+        dagshub.init(
+            repo_owner='isiakpereaghogho',
+            repo_name='Sentiment_Analysis_for_ShopEase_Customer_Feedback',
+            mlflow=True
+        )
+        logging.info("DagsHub initialized successfully.")
+    except Exception as e:
+        logging.error(f"Failed to initialize DagsHub: {e}")
+        raise
 
 def get_best_model(experiment_name = "sentiment_analysis_experiment"):
     try:
@@ -32,3 +43,9 @@ def get_best_f1(experiment_name = "sentiment_analysis_experiment"):
     if best_model is None:
         return None
     return best_model.data.metrics.get("f1", 0)
+
+def load_registered_model(model_name = model_name):
+    
+    model_uri = f"models:/{model_name}/latest"
+    sentiment_pipeline = mlflow.transformers.load_model(model_uri)
+    return sentiment_pipeline

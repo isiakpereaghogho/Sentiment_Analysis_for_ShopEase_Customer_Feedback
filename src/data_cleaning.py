@@ -20,8 +20,8 @@ sentiment_data = data_ingestion()
 
 
 class DataCleaning:
-    def __init__(self, sentiment_data):
-        self.sentiment_data = sentiment_data.copy()
+    def __init__(self):
+        self.sentiment_data = sentiment_data
         self.nlp_en = spacy.load("en_core_web_sm", disable=["parser", "ner", "textcat"])
         self.nlp_multi = spacy.load("xx_ent_wiki_sm", disable=["parser", "ner", "textcat"])
         self.stop_words = set(stopwords.words("english"))
@@ -59,29 +59,29 @@ class DataCleaning:
         tokens = [token.lemma_ if token.lemma_ else token.text for token in doc]
         return " ".join(tokens).strip()
 
-    def clean_data(self):
+    def clean_data(self, sentiment_data):
         logging.info("Starting data cleaning...")
         try:
-            self.sentiment_data["clean_review"] = self.sentiment_data["review"].apply(self.clean_text)
+            sentiment_data["clean_review"] = sentiment_data["review"].apply(self.clean_text)
 
-            self.sentiment_data["language"] = "en"
-            mask = self.sentiment_data["review"].apply(self.possibly_multilingual)
-            self.sentiment_data.loc[mask, "language"] = self.sentiment_data.loc[mask, "review"].apply(self.detect_language_fast)
+            sentiment_data["language"] = "en"
+            mask = sentiment_data["review"].apply(self.possibly_multilingual)
+            sentiment_data.loc[mask, "language"] = sentiment_data.loc[mask, "review"].apply(self.detect_language_fast)
 
-            self.sentiment_data["lemma_text_review"] = self.sentiment_data.apply(
+            sentiment_data["lemma_text_review"] = sentiment_data.apply(
                 lambda row: self.lemmatize_multilingual(row["clean_review"], row["language"]),
                 axis=1
             )
 
-            self.sentiment_data["final_review"] = self.sentiment_data["lemma_text_review"].apply(
+            sentiment_data["final_review"] = sentiment_data["lemma_text_review"].apply(
                 lambda x: " ".join([word for word in str(x).split() if word not in self.stop_words])
             )
 
-            self.sentiment_data["label"] = self.sentiment_data["rating"].apply(
+            sentiment_data["label"] = sentiment_data["rating"].apply(
                 lambda r: 0 if r in (1, 2) else (1 if r == 3 else 2)
             )
 
-            sentiment_data = self.sentiment_data[["review", "final_review", "label"]]
+            sentiment_data = sentiment_data[["review", "final_review", "label"]]
             sentiment_data.to_csv(Cleaned_Data, index=False)
 
             logging.info("Data cleaning completed.")
@@ -92,7 +92,5 @@ class DataCleaning:
             raise
 
 
-cleaner = DataCleaning(sentiment_data)
-cleaned_df = cleaner.clean_data()
-print(cleaned_df.head())
+
              
