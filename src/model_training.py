@@ -60,4 +60,4 @@ def train_and_evaluate():
     except Exception as e:
         logging.error(f"Error occurred during training and evaluation: {e}") 
 
-train_and_evaluate()   
+#train_and_evaluate()   

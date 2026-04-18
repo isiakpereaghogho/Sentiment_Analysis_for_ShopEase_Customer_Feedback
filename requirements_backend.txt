@@ -1,0 +1,15 @@
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+nltk
+spacy
+langdetect
+joblib
+accelerate>=1.1.0
+mlflow
+dagshub
+python-multipart
+langid
+transformers

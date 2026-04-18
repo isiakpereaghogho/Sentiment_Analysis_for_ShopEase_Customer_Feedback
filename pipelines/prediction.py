@@ -5,7 +5,7 @@ import logging
 logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
 
 
-class predict_sentiment:
+class PredictSentiment:
     def __init__(self):
         self.pipelines = load_registered_model()
         #define the label mapping
@@ -13,9 +13,17 @@ class predict_sentiment:
 
     def predict(self, text):
         raw_result = self.pipelines(text)
-        # Map label to actual text label
+
+        # Map labels and build scores dict
+        scores = {}
         for item in raw_result:
-            index = int(item['label'].split('_')[-1])  # Extract index from label like 'LABEL_0'
-            item['label'] = self.id2label.get(index, item['label'])  # Map
-            
-        return raw_result
+            index = int(item['label'].split('_')[-1])
+            label = self.id2label.get(index, item['label'])
+            score = item['score']
+            scores[label] = score
+
+        # Get best label (highest score)
+        best_label = max(scores, key=scores.get)
+        best_score = scores[best_label]
+
+        return {"sentiment": best_label,"confidence": best_score,"scores": scores}

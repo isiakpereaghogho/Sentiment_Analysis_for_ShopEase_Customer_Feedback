@@ -10,6 +10,7 @@ Train_Data = os.path.join(BASE_DIR, "Data", "processed_data", "train_data.pt")
 Test_Data = os.path.join(BASE_DIR, "Data", "processed_data", "test_data.pt")
 
 model_name = "distilbert-base-multilingual-cased"
+registered_model_name = "distilbert_sentiment_model"
 num_labels =3
 max_length=128
 padding=True
