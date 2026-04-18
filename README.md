@@ -41,20 +41,35 @@ The dataset contains customer reviews with the following columns:
 ### Project Structure
 
 Sentiment_Analysis_for_ShopEase_Customer_Feedback/
+
 │
+
 ├── config/
+
 │   └── constant.py          # File paths & model configs
+
 │
+
 ├── src/
+
 │   ├── data_ingestion.py    # Load raw data
+
 │   ├── data_cleaning.py     # Cleaning + NLP preprocessing
+
 │   ├── data_preprocessing.py # Train/test split + tokenization
+
 │
+
 ├── notebooks/               # Exploratory analysis (EDA)
+
 ├── data/                    # Raw and processed data
+
 ├── models/                  # Saved models
+
 │
+
 ├── requirements.txt
+
 └── README.md
 
 ### Data Cleaning & Preprocessing
