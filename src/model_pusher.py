@@ -5,17 +5,35 @@ import logging
 from transformers import pipeline
 from utils.model_utils import get_best_f1
 from config.constant import model_name, training_args, registered_model_name
+import os
+
+from dotenv import load_dotenv
+load_dotenv(override=True)
 
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class ModelPusher:
     def __init__(self, experiment_name="sentiment_analysis_experiment"):
         try:
-            dagshub.init(
-                repo_owner='isiakpereaghogho',
-                repo_name='Sentiment_Analysis_for_ShopEase_Customer_Feedback',
-                mlflow=True
-            )
+            # dagshub.init(
+            #     repo_owner='isiakpereaghogho',
+            #     repo_name='Sentiment_Analysis_for_ShopEase_Customer_Feedback',
+            #     mlflow=True
+            # )
+
+            dagshub_token = os.getenv("ShopEase_env_Dagshub_token")
+            if not dagshub_token:
+                raise ValueError("Dagshub token not found in environment variables.")
+            
+            os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+            os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+            dagshub_url = "https://dagshub.com"
+            repo_owner = "isiakpereaghogho"
+            repo_name = "Sentiment_Analysis_for_ShopEase_Customer_Feedback"
+
+            #Setting up the MLflow tracking URI to point to Dagshub
+            mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
             self.experiment_name = experiment_name
             mlflow.set_experiment(self.experiment_name)
             logging.info("ModelPusher has been successfully initialized.")

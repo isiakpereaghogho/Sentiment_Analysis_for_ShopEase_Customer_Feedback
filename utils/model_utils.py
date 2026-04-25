@@ -3,6 +3,7 @@ import mlflow
 from mlflow.tracking import MlflowClient
 import logging
 from config.constant import registered_model_name
+import os
 
 logging.basicConfig(level=logging.INFO)
 
@@ -48,11 +49,31 @@ def get_best_f1(experiment_name="sentiment_analysis_experiment"):
     return best_model.data.metrics.get("f1", 0)
 
 def load_registered_model(registered_name=registered_model_name):
-    try:
-        init_dagshub()
-        model_uri = f"models:/{registered_name}/1"
-        sentiment_pipeline = mlflow.transformers.load_model(model_uri)
-        return sentiment_pipeline
-    except Exception as e:
-        logging.error(f"Error loading registered model: {e}")
-        raise
+    # Local testing initialization of DagsHub and MLflow tracking URI
+    #dagshub.init(
+    #    repo_owner='isiakpereaghogho',
+    #    repo_name='Sentiment_Analysis_for_ShopEase_Customer_Feedback',
+    #    mlflow=True
+    #)
+
+    #Remote / Production access to mlflow dagshub
+    dagshub_token = os.getenv("ShopEase_env_Dagshub_token")
+    if not dagshub_token:
+        raise ValueError("Dagshub token not found in environment variables.")
+            
+    os.environ["MLFLOW_TRACKING_USERNAME"] = dagshub_token
+    os.environ["MLFLOW_TRACKING_PASSWORD"] = dagshub_token
+
+    dagshub_url = "https://dagshub.com"
+    repo_owner = "isiakpereaghogho"
+    repo_name = "Sentiment_Analysis_for_ShopEase_Customer_Feedback"
+
+    #Setting up the MLflow tracking URI to point to Dagshub
+    mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
+
+    model_uri = f"models:/{registered_name}/latest"
+
+    sentiment_pipeline = mlflow.transformers.load_model(model_uri)
+
+    return sentiment_pipeline
+    

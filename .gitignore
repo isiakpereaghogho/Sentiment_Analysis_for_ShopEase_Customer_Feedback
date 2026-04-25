@@ -185,3 +185,4 @@ shopease_env/
 1.1.0
 .env
 mlflow.db
+__pychache__/
