@@ -2,6 +2,7 @@ import mlflow
 import mlflow.transformers
 import dagshub
 import logging
+from opentelemetry import metrics
 from transformers import pipeline
 from utils.model_utils import get_best_f1
 from config.constant import model_name, training_args, registered_model_name
@@ -51,8 +52,18 @@ class ModelPusher:
 
             if old_f1 is None or new_f1 >= old_f1:
                 with mlflow.start_run(run_name="sentiment_model_training"):
+
                     mlflow.log_metric("accuracy", metrics["eval_accuracy"])
                     mlflow.log_metric("f1", new_f1)
+
+                    mlflow.log_metric("eval_accuracy", metrics["eval_accuracy"])
+                    mlflow.log_metric("eval_f1", new_f1)
+
+                    if "eval_loss" in metrics:
+                        mlflow.log_metric("eval_loss", metrics["eval_loss"])
+
+                    # mlflow.log_metric("accuracy", metrics["eval_accuracy"])
+                    # mlflow.log_metric("f1", new_f1)
 
                     mlflow.log_param("model_name", model_name)
                     mlflow.log_param("epochs", training_args.num_train_epochs)

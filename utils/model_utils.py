@@ -71,9 +71,25 @@ def load_registered_model(registered_name=registered_model_name):
     #Setting up the MLflow tracking URI to point to Dagshub
     mlflow.set_tracking_uri(f"{dagshub_url}/{repo_owner}/{repo_name}.mlflow")
 
-    model_uri = f"models:/{registered_name}/latest"
+    model_uri = f"models:/{registered_name}/11"
 
     sentiment_pipeline = mlflow.transformers.load_model(model_uri)
 
     return sentiment_pipeline
+import time
+import mlflow.transformers
+
+def load_registered_model_with_retry(model_uri, retries=5, delay=20):
+    last_error = None
+
+    for attempt in range(1, retries + 1):
+        try:
+            print(f"Loading model attempt {attempt}/{retries}")
+            return mlflow.transformers.load_model(model_uri)
+        except Exception as e:
+            last_error = e
+            print(f"Model load failed: {e}")
+            time.sleep(delay)
+
+    raise last_error
     
