@@ -129,7 +129,7 @@ Despite the similarity in performance between BERT model and Logistic Regression
 ### How to Run
 
 1. Clone repo:
-git clone https://github.com/your-username/Sentiment_Analysis_for_ShopEase_Customer_Feedback.git
+git clone https://github.com/isiakpereaghogho/Sentiment_Analysis_for_ShopEase_Customer_Feedback.git
 cd Sentiment_Analysis_for_ShopEase_Customer_Feedback
 2. Create virtual environment:
 python -m venv shopease_env
