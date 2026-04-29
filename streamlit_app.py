@@ -7,10 +7,10 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 
 #Backend URL for production deployment on localhost
-#API_BASE_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 
 #Backend URL for production deployment on Render.com
-API_BASE_URL = os.getenv("API_URL", "https://shopease-app-backend-0e7o.onrender.com")
+#API_URL = os.getenv("API_URL", "https://shopease-app-backend-12wr.onrender.com")
 
 st.set_page_config(page_title="ShopEase Sentiment Dashboard", layout="wide")
 
@@ -42,7 +42,7 @@ if st.button("Predict Sentiment"):
         with st.spinner("Analyzing sentiment..."):
             try:
                 response = requests.post(
-                    f"{API_BASE_URL}/predict_sentiment",
+                    f"{API_URL}/predict_sentiment",
                     json={"text": user_input},
                     timeout=180
                 )
@@ -129,10 +129,10 @@ st.divider()
 # ---------- BATCH PREDICTION ----------
 st.header("Batch Prediction (CSV Upload)")
 
-#API_BASE_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
+API_URL = os.getenv("API_URL", "http://127.0.0.1:8000")
 
 #Backend URL for production deployment on Render.com
-API_BASE_URL = os.getenv("API_URL", "https://shopease-app-backend-0e7o.onrender.com")
+#API_URL = os.getenv("API_URL", "https://shopease-app-backend-12wr.onrender.com")
 
 uploaded_file = st.file_uploader(
     "Upload CSV with 'review' column",
@@ -175,7 +175,7 @@ if uploaded_file is not None:
 
                 for review in batch:
                     response = requests.post(
-                        f"{API_BASE_URL}/predict_sentiment",
+                        f"{API_URL}/predict_sentiment",
                         json={"text": review},
                         timeout=180
                     )
@@ -250,7 +250,7 @@ if st.button("Retrain Model", key="retrain"):
             timer_text.write(f"Elapsed time: {elapsed} seconds")
             time.sleep(0.5)
 
-        response = requests.get(f"{API_BASE_URL}/train", timeout=300)
+        response = requests.get(f"{API_URL}/train", timeout=300)
 
         elapsed = int(time.time() - start_time)
 
